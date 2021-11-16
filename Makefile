@@ -18,3 +18,11 @@ protoc:
 		--go-grpc_out=:$$(dirname $$file) --go-grpc_opt=paths=source_relative \
 		$$file; \
 	done
+
+.PHONY: docker-build
+docker-build:
+	docker build -t jxlwqq/todo -f ./cmd/server/Dockerfile .
+
+.PHONY: kube-deploy
+kube-deploy:
+	kubectl apply -f manifests/

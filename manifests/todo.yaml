@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todo
+  labels:
+    app: todo
+spec:
+  selector:
+    matchLabels:
+      app: todo
+  template:
+    metadata:
+      labels:
+        app: todo
+    spec:
+      containers:
+        - name: todo
+          image: jxlwqq/todo
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 50051
+          volumeMounts:
+            - mountPath: /configs # 使用 configmap 覆盖默认的配置文件
+              name: todo
+      volumes:
+        - name: todo
+          configMap:
+            name: todo
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: todo
+data:
+  config.yaml: |-
+    grpc:
+      port: :50051
+    dsn: root@tcp(mysql.default.svc.cluster.local:3306)/todo?charset=utf8mb4&parseTime=True&loc=Local
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: todo
+  labels:
+    app: todo
+spec:
+  selector:
+    app: todo
+  ports:
+    - name: grpc # important!
+      port: 50051
+      targetPort: 50051
+

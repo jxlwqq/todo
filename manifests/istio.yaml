@@ -1,0 +1,30 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: todo
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+    - port:
+        number: 80
+        protocol: HTTP
+        name: http
+      hosts:
+        - "*"
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: todo
+spec:
+  gateways:
+    - todo
+  hosts:
+    - "*"
+  http:
+    - route:
+        - destination:
+            host: todo.default.svc.cluster.local
+            port:
+              number: 50051
