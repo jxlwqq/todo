@@ -25,4 +25,4 @@ docker-build:
 
 .PHONY: kube-deploy
 kube-deploy:
-	kubectl apply -f manifests/
+	kubectl apply -f deployments/
