@@ -12,9 +12,9 @@ COPY internal/ internal/
 COPY pkg/ pkg/
 RUN CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH go build -a -o app ./cmd/server/
 
-FROM alpine
+FROM --platform=$TARGETPLATFORM alpine
 WORKDIR /
-COPY --from=builder /workspace/app .
 COPY configs/ configs/
+COPY --from=builder /workspace/app .
 EXPOSE 50051
 ENTRYPOINT ["/app"]
