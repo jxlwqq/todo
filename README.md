@@ -17,6 +17,8 @@
 brew install go
 # 安装 Protobuf
 brew install protobuf
+# 安装 grpcurl
+brew install grpcurl
 # 安装 Istio
 brew install istioctl
 kubectl config use-context docker-desktop
@@ -54,9 +56,12 @@ make docker-build
 make kube-deploy-mysql
 export MYSQL_POD=$(kubectl get pod -l app=mysql -o jsonpath={.items..metadata.name})
 kubectl exec -it "${MYSQL_POD}" -- mysql -uroot
+```
+
+```mysql
 # 在 MySQL 中，创建数据库和表
 CREATE DATABASE IF NOT EXISTS `todo`;
-USE todo;
+USE `todo`;
 CREATE TABLE IF NOT EXISTS `todos`
 (
     `id`          bigint unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -78,7 +83,7 @@ make kube-deploy-todo
 make kube-deploy-istio
 ```
 
-### 使用 grpcurl 访问gRPC服务
+### 使用 grpcurl 访问 gRPC 服务
 
 ```shell
 # create
