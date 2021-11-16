@@ -1,41 +1,94 @@
 # Todo 服务
 
-### 部署到集群
+### 环境依赖
+
+* docker-desktop >= 4.2.0
+* kubernetes >= 1.21.5
+* go >= 1.17
+* istioctl >= 1.11.4
+* protobuf >= 3.17.3
+* grpcurl >= 1.8.5
+
+
+下载安装 Docker Desktop ，并启动内置的 Kubernetes 集群。
 
 ```shell
-make kube-deploy
+# 安装 Go
+brew install go
+# 安装 Protobuf
+brew install protobuf
+# 安装 Istio
+brew install istioctl
+kubectl config use-context docker-desktop
+istioctl install -y
+kubectl label namespace default istio-injection=enabled
+```
 
+### Makefile 介绍
+
+|  命令   | 说明  |
+|  ----  | ----  |
+| `make init`  | 安装 protoc-gen-go、protoc-gen-grpc 和 wire|
+| `make protoc`  | 基于 proto 文件，生成 *_pb.go 和 *_grpc.pb.go |
+| `make wire`    | 基于 wire.go文件，生成 wire_gen.go |
+| `make docker-build`  | 构建 docker 镜像 |
+| `make docker-push`   | 推送 docker 镜像 |
+| `make kube-deploy-mysql` | 在集群中部署 MySQL 服务 |
+| `make kube-deploy-todo` | 在集群中部署 Todo 服务 |
+| `make kube-deploy-istio` | 在集群中部署 Istio Gateway 和 VirtualService |
+| `make kube-deploy-all` | 在集群中部署所有资源 |
+| `make kube-delete-all` | 在集群中删除所有资源 |
+
+### 构建镜像
+
+```shell
+make docker-build
+```
+
+### 部署服务
+
+部署 MySQL 服务：
+
+```shell
+# 部署 MySQL 服务
+make kube-deploy-mysql
 export MYSQL_POD=$(kubectl get pod -l app=mysql -o jsonpath={.items..metadata.name})
 kubectl exec -it "${MYSQL_POD}" -- mysql -uroot
-
+# 在 MySQL 中，创建数据库和表
 CREATE DATABASE IF NOT EXISTS `todo`;
 USE todo;
 CREATE TABLE IF NOT EXISTS `todos`
 (
-    `id`          bigint(20) NOT NULL AUTO_INCREMENT,
-    `title`       varchar(200)    DEFAULT NULL,
-    `description` varchar(1024)   DEFAULT NULL,
-    `remind_at`   timestamp  NULL DEFAULT NULL,
-    PRIMARY KEY (`id`),
-    UNIQUE KEY `ID_UNIQUE` (`id`)
+    `id`          bigint unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `title`       varchar(255)         DEFAULT NULL,
+    `description` varchar(255)         DEFAULT NULL,
+    `remind_at`   timestamp       NULL DEFAULT NULL
 );
+```
+
+部署 Todo 服务：
+
+```shell
+make kube-deploy-todo
+```
+
+部署 Istio Gateway 和 VirtualService：
+
+```shell
+make kube-deploy-istio
 ```
 
 ### 使用 grpcurl 访问gRPC服务
 
 ```shell
-brew install grpcurl
-```
-
-```shell
 # create
-grpcurl -d '{"todo": {"title":"123", "description": "123", "remind_at": "2006-01-02T15:04:05.999999999Z"}}' -plaintext 127.0.0.1:80  v1.TodoService.Create 
+grpcurl -d '{"todo": {"title":"10点会议", "description": "服务架构优化", "remind_at": "2021-01-02T15:04:05.999999999Z"}}' -plaintext 127.0.0.1:80  v1.TodoService.Create 
 # get
 grpcurl -d '{"id": 1}' -plaintext 127.0.0.1:80  v1.TodoService.Get 
 # list
 grpcurl -plaintext 127.0.0.1:80  v1.TodoService.List
 # update
-grpcurl -d '{"todo": {"id": 1, "title":"123456", "description": "123456", "remind_at": "2006-01-02T15:04:05.999999999Z"}}' -plaintext 127.0.0.1:80  v1.TodoService.Update
+grpcurl -d '{"todo": {"id": 1, "title":"10点会议", "description": "服务架构调整", "remind_at": "2021-01-02T15:04:05.999999999Z"}}' -plaintext 127.0.0.1:80  v1.TodoService.Update
 # delete
 grpcurl -d '{"id": 1}' -plaintext 127.0.0.1:80  v1.TodoService.Delete 
 ```
