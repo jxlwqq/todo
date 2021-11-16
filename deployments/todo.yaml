@@ -5,6 +5,7 @@ metadata:
   labels:
     app: todo
 spec:
+  replicas: 2
   selector:
     matchLabels:
       app: todo
@@ -22,6 +23,13 @@ spec:
           volumeMounts:
             - mountPath: /configs # 使用 configmap 覆盖默认的配置文件
               name: todo
+          resources:
+            requests:
+              cpu: 100m
+              memory: 100Mi
+            limits:
+              cpu: 100m
+              memory: 100Mi
       volumes:
         - name: todo
           configMap:
