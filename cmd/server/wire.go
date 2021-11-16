@@ -10,7 +10,7 @@ import (
 	"github.com/jxlwqq/todo/pkg/dbcontext"
 )
 
-func InitTodo(DSN string) (v1.TodoServiceServer, error) {
+func InitTodoService(DSN string) (v1.TodoServiceServer, error) {
 	wire.Build(todo.NewService, todo.NewRepository, dbcontext.NewDB)
 	return todo.Service{}, nil
 }

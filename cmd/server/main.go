@@ -20,7 +20,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	todoService, _ := InitTodo(conf.DSN)
+	todoService, _ := InitTodoService(conf.DSN)
 
 	server := grpc.NewServer()
 	reflection.Register(server)

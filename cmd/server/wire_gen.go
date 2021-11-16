@@ -14,7 +14,7 @@ import (
 
 // Injectors from wire.go:
 
-func InitTodo(DSN string) (v1.TodoServiceServer, error) {
+func InitTodoService(DSN string) (v1.TodoServiceServer, error) {
 	db := dbcontext.NewDB(DSN)
 	repository := todo.NewRepository(db)
 	todoServiceServer := todo.NewService(repository)
