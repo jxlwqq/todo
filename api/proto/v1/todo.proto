@@ -17,53 +17,43 @@ service TodoService {
 }
 
 message CreateRequest{
-  string api = 1;
-  Todo todo = 2;
+  Todo todo = 1;
 }
 
 
 message CreateResponse {
-  string api = 1;
-  int64 id = 2;
+  int64 id = 1;
 }
 
 message UpdateRequest {
-  string api = 1;
-  Todo todo = 2;
+  Todo todo = 1;
 }
 
 message UpdateResponse {
-  string api = 1;
-  int64 updated = 2;
+  bool updated = 1;
 }
 
 message DeleteRequest {
-  string api = 1;
-  int64 id = 2;
+  int64 id = 1;
 }
 
 message DeleteResponse {
-  string api = 1;
-  int64 deleted = 2;
+  bool deleted = 1;
 }
 
 message GetRequest {
-  string api = 1;
-  int64 id = 2;
+  int64 id = 1;
 }
 
 message GetResponse {
-  string api = 1;
-  Todo todo = 2;
+  Todo todo = 1;
 }
 
 message ListRequest {
-  string api = 1;
 }
 
 message ListResponse {
-  string api = 1;
-  repeated Todo todo = 2;
+  repeated Todo todos = 1;
 }
 
 message Todo {
