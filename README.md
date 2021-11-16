@@ -3,9 +3,14 @@
 ### 部署到集群
 
 ```shell
-create database if not exists `todo`;
-use todo;
-CREATE TABLE `todos`
+make kube-deploy
+
+export MYSQL_POD=$(kubectl get pod -l app=mysql -o jsonpath={.items..metadata.name})
+kubectl exec -it "${MYSQL_POD}" -- mysql -uroot
+
+CREATE DATABASE IF NOT EXISTS `todo`;
+USE todo;
+CREATE TABLE IF NOT EXISTS `todos`
 (
     `id`          bigint(20) NOT NULL AUTO_INCREMENT,
     `title`       varchar(200)    DEFAULT NULL,
