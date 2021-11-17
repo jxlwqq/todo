@@ -45,9 +45,9 @@ kube-deploy-istio:
 
 .PHONY: kube-deploy-all
 kube-deploy-all:
-	kube-deploy-mysql
-	kube-deploy-todo
-	kube-deploy-istio
+	make kube-deploy-mysql
+	make kube-deploy-todo
+	make kube-deploy-istio
 
 .PHONY: kube-delete-all
 kube-delete-all:

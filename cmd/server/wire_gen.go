@@ -7,16 +7,16 @@
 package main
 
 import (
-	"github.com/jxlwqq/todo/api/proto/v1"
+	"github.com/jxlwqq/todo/api/todo/v1"
 	"github.com/jxlwqq/todo/internal/todo"
 	"github.com/jxlwqq/todo/pkg/dbcontext"
 )
 
 // Injectors from wire.go:
 
-func InitTodoService(DSN string) (v1.TodoServiceServer, error) {
+func InitTodoServer(DSN string) (v1.TodoServer, error) {
 	db := dbcontext.NewDB(DSN)
 	repository := todo.NewRepository(db)
-	todoServiceServer := todo.NewService(repository)
-	return todoServiceServer, nil
+	todoServer := todo.NewServer(repository)
+	return todoServer, nil
 }

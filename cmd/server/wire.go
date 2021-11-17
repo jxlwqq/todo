@@ -5,12 +5,12 @@ package main
 
 import (
 	"github.com/google/wire"
-	v1 "github.com/jxlwqq/todo/api/proto/v1"
+	v1 "github.com/jxlwqq/todo/api/todo/v1"
 	"github.com/jxlwqq/todo/internal/todo"
 	"github.com/jxlwqq/todo/pkg/dbcontext"
 )
 
-func InitTodoService(DSN string) (v1.TodoServiceServer, error) {
-	wire.Build(todo.NewService, todo.NewRepository, dbcontext.NewDB)
-	return todo.Service{}, nil
+func InitTodoServer(DSN string) (v1.TodoServer, error) {
+	wire.Build(todo.NewServer, todo.NewRepository, dbcontext.NewDB)
+	return todo.Server{}, nil
 }

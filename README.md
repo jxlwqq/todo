@@ -62,7 +62,7 @@ kubectl exec -it "${MYSQL_POD}" -- mysql -uroot
 # 在 MySQL 中，创建数据库和表
 CREATE DATABASE IF NOT EXISTS `todo`;
 USE `todo`;
-CREATE TABLE IF NOT EXISTS `todos`
+CREATE TABLE IF NOT EXISTS `items`
 (
     `id`          bigint unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `title`       varchar(255)         DEFAULT NULL,
@@ -86,14 +86,28 @@ make kube-deploy-istio
 ### 使用 grpcurl 访问 gRPC 服务
 
 ```shell
+grpcurl -plaintext 127.0.0.1:80 list
+```
+
+返回：
+
+```shell
+grpc.health.v1.Health
+grpc.reflection.v1alpha.ServerReflection
+v1.Todo
+```
+
+CRUD 操作：
+
+```shell
 # create
-grpcurl -d '{"todo": {"title":"10点会议", "description": "服务架构优化", "remind_at": "2021-01-02T15:04:05.999999999Z"}}' -plaintext 127.0.0.1:80  v1.TodoService.Create 
+grpcurl -d '{"item": {"title":"10点会议", "description": "服务架构优化", "remind_at": "2021-01-02T15:04:05.999999999Z"}}' -plaintext 127.0.0.1:80  v1.Todo.Create 
 # get
-grpcurl -d '{"id": 1}' -plaintext 127.0.0.1:80  v1.TodoService.Get 
+grpcurl -d '{"id": 1}' -plaintext 127.0.0.1:80  v1.Todo.Get 
 # list
-grpcurl -plaintext 127.0.0.1:80  v1.TodoService.List
+grpcurl -plaintext 127.0.0.1:80  v1.Todo.List
 # update
-grpcurl -d '{"todo": {"id": 1, "title":"10点会议", "description": "服务架构调整", "remind_at": "2021-01-02T15:04:05.999999999Z"}}' -plaintext 127.0.0.1:80  v1.TodoService.Update
+grpcurl -d '{"item": {"id": 1, "title":"10点会议", "description": "服务架构调整", "remind_at": "2021-01-02T15:04:05.999999999Z"}}' -plaintext 127.0.0.1:80  v1.Todo.Update
 # delete
-grpcurl -d '{"id": 1}' -plaintext 127.0.0.1:80  v1.TodoService.Delete 
+grpcurl -d '{"id": 1}' -plaintext 127.0.0.1:80  v1.Todo.Delete 
 ```

@@ -2,7 +2,7 @@ package todo
 
 import "time"
 
-type Todo struct {
+type Item struct {
 	ID          int64     `json:"id"`
 	Title       string    `json:"title"`
 	Description string    `json:"description"`

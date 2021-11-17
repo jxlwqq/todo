@@ -5,10 +5,10 @@ package  v1;
 import "google/protobuf/timestamp.proto";
 
 
-option go_package = "github.com/jxlwqq/todo/api/proto/v1";
+option go_package = "github.com/jxlwqq/todo/api/todo/v1";
 
 
-service TodoService {
+service Todo {
   rpc Create(CreateRequest) returns (CreateResponse);
   rpc Update(UpdateRequest) returns (UpdateResponse);
   rpc Delete(DeleteRequest) returns (DeleteResponse);
@@ -17,7 +17,7 @@ service TodoService {
 }
 
 message CreateRequest{
-  Todo todo = 1;
+  Item item = 1;
 }
 
 
@@ -26,7 +26,7 @@ message CreateResponse {
 }
 
 message UpdateRequest {
-  Todo todo = 1;
+  Item item = 1;
 }
 
 message UpdateResponse {
@@ -46,17 +46,17 @@ message GetRequest {
 }
 
 message GetResponse {
-  Todo todo = 1;
+  Item item = 1;
 }
 
 message ListRequest {
 }
 
 message ListResponse {
-  repeated Todo todos = 1;
+  repeated Item items = 1;
 }
 
-message Todo {
+message Item {
   int64 id = 1;
   string title = 2;
   string description = 3;
