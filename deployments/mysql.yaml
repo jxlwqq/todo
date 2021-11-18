@@ -63,3 +63,4 @@ spec:
   ports:
     - port: 3306
       targetPort: 3306
+      appProtocol: mysql # 协议选择 https://istio.io/latest/zh/docs/ops/configuration/traffic-management/protocol-selection/

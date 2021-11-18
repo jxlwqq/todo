@@ -65,7 +65,6 @@ spec:
   selector:
     app: todo
   ports:
-    - name: grpc # important!
-      port: 50051
+    - port: 50051
       targetPort: 50051
-
+      appProtocol: grpc # 协议选择 https://istio.io/latest/zh/docs/ops/configuration/traffic-management/protocol-selection/
