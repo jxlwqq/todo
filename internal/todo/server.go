@@ -3,6 +3,8 @@ package todo
 import (
 	"context"
 	v1 "github.com/jxlwqq/todo/api/todo/v1"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -31,7 +33,7 @@ func (s Server) Create(ctx context.Context, req *v1.CreateRequest) (*v1.CreateRe
 	resp := v1.CreateResponse{}
 
 	if err := s.r.Create(&item); err != nil {
-		return &resp, nil
+		return &resp, status.Errorf(codes.Internal, "create item failed: %v", err)
 	}
 
 	resp.Id = item.ID
@@ -44,8 +46,7 @@ func (s Server) Update(ctx context.Context, req *v1.UpdateRequest) (*v1.UpdateRe
 	id := req.Item.Id
 	resp := v1.UpdateResponse{}
 	if _, err := s.r.Get(id); err != nil {
-		resp.Updated = false
-		return &resp, err
+		return &resp, status.Error(codes.NotFound, "item not found")
 	}
 	title := req.Item.Title
 	description := req.Item.Description
@@ -59,7 +60,7 @@ func (s Server) Update(ctx context.Context, req *v1.UpdateRequest) (*v1.UpdateRe
 	}
 
 	if err := s.r.Update(&item); err != nil {
-		return &resp, nil
+		return &resp, status.Errorf(codes.Internal, "update item failed: %v", err)
 	}
 
 	resp.Updated = true
@@ -71,11 +72,10 @@ func (s Server) Delete(ctx context.Context, req *v1.DeleteRequest) (*v1.DeleteRe
 	id := req.Id
 	resp := v1.DeleteResponse{}
 	if _, err := s.r.Get(id); err != nil {
-		resp.Deleted = false
-		return &resp, err
+		return &resp, status.Errorf(codes.NotFound, "item not found")
 	}
 	if err := s.r.Delete(id); err != nil {
-		return &resp, nil
+		return &resp, status.Errorf(codes.Internal, "delete item failed: %v", err)
 	}
 
 	resp.Deleted = true
@@ -90,7 +90,7 @@ func (s Server) Get(ctx context.Context, req *v1.GetRequest) (*v1.GetResponse, e
 
 	item, err := s.r.Get(id)
 	if err != nil {
-		return &resp, nil
+		return &resp, status.Errorf(codes.NotFound, "item not found")
 	}
 
 	resp.Item = &v1.Item{
@@ -108,7 +108,7 @@ func (s Server) List(ctx context.Context, req *v1.ListRequest) (*v1.ListResponse
 
 	items, err := s.r.List()
 	if err != nil {
-		return &resp, nil
+		return &resp, status.Errorf(codes.Internal, "list items failed: %v", err)
 	}
 
 	for _, item := range items {
