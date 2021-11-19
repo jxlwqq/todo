@@ -52,23 +52,7 @@ make docker-build
 部署 MySQL 服务：
 
 ```shell
-# 部署 MySQL 服务
 make kube-deploy-mysql
-export MYSQL_POD=$(kubectl get pod -l app=mysql -o jsonpath={.items..metadata.name})
-kubectl exec -it "${MYSQL_POD}" -- mysql -uroot
-```
-
-```mysql
-# 在 MySQL 中，创建数据库和表
-CREATE DATABASE IF NOT EXISTS `todo`;
-USE `todo`;
-CREATE TABLE IF NOT EXISTS `items`
-(
-    `id`          bigint unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    `title`       varchar(255)         DEFAULT NULL,
-    `description` varchar(255)         DEFAULT NULL,
-    `remind_at`   timestamp       NULL DEFAULT NULL
-);
 ```
 
 部署 Todo 服务：

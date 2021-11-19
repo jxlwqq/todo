@@ -1,5 +1,5 @@
-kind: Deployment
 apiVersion: apps/v1
+kind: Deployment
 metadata:
   name: mysql
   labels:
@@ -26,6 +26,8 @@ spec:
           volumeMounts:
             - mountPath: /var/lib/mysql
               name: mysql
+            - mountPath: /docker-entrypoint-initdb.d
+              name: mysql-initdb
           resources:
             requests:
               cpu: 1000m
@@ -37,9 +39,30 @@ spec:
         - name: mysql
           persistentVolumeClaim:
             claimName: mysql
+        - name: mysql-initdb
+          configMap:
+            name: mysql-initdb
 ---
-kind: PersistentVolumeClaim
 apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-initdb
+  labels:
+    app: mysql
+data:
+  initdb.sql: |
+    CREATE DATABASE IF NOT EXISTS `todo`;
+    USE `todo`;
+    CREATE TABLE IF NOT EXISTS `items`
+    (
+        `id`          bigint unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        `title`       varchar(255)         DEFAULT NULL,
+        `description` varchar(255)         DEFAULT NULL,
+        `remind_at`   timestamp       NULL DEFAULT NULL
+    );
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
 metadata:
   name: mysql
   labels:
@@ -51,8 +74,8 @@ spec:
     requests:
       storage: 1Gi
 ---
-kind: Service
 apiVersion: v1
+kind: Service
 metadata:
   name: mysql
   labels:
