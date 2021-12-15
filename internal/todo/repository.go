@@ -1,6 +1,8 @@
 package todo
 
-import "github.com/jxlwqq/todo/pkg/dbcontext"
+import (
+	"github.com/jxlwqq/todo/internal/pkg/dbcontext"
+)
 
 type Repository interface {
 	Create(item *Item) error

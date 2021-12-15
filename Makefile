@@ -19,7 +19,7 @@ wire:
 
 .PHONY: docker-build
 docker-build:
-	docker build -t jxlwqq/todo:latest -f ./cmd/server/Dockerfile .
+	docker build -t jxlwqq/todo:latest -f ./build/docker/server/Dockerfile .
 
 .PHONY: docker-push
 docker-push:
@@ -27,7 +27,7 @@ docker-push:
 
 .PHONY: docker-buildx
 docker-buildx:
-	docker buildx build -t jxlwqq/todo:latest --platform linux/arm64,linux/amd64 --push -f ./cmd/server/Dockerfile .
+	docker buildx build -t jxlwqq/todo:latest --platform linux/arm64,linux/amd64 --push -f ./build/docker/server/Dockerfile .
 
 .PHONY: kube-deploy-mysql
 kube-deploy-mysql:

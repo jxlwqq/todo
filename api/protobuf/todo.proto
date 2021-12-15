@@ -1,11 +1,11 @@
 syntax = "proto3";
 
-package  v1;
+package  api.protobuf;
 
 import "google/protobuf/timestamp.proto";
 
 
-option go_package = "github.com/jxlwqq/todo/api/todo/v1";
+option go_package = "github.com/jxlwqq/todo/api/protobuf";
 
 
 service Todo {

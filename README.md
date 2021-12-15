@@ -76,22 +76,22 @@ grpcurl -plaintext 127.0.0.1:80 list
 返回：
 
 ```shell
+api.protobuf.Todo
 grpc.health.v1.Health
 grpc.reflection.v1alpha.ServerReflection
-v1.Todo
 ```
 
 CRUD 操作：
 
 ```shell
 # create
-grpcurl -d '{"item": {"title":"10点会议", "description": "服务架构优化", "remind_at": "2021-01-02T15:04:05.999999999Z"}}' -plaintext 127.0.0.1:80  v1.Todo.Create 
+grpcurl -d '{"item": {"title":"10点会议", "description": "服务架构优化", "remind_at": "2021-01-02T15:04:05.999999999Z"}}' -plaintext 127.0.0.1:80  api.protobuf.Todo.Create 
 # get
-grpcurl -d '{"id": 1}' -plaintext 127.0.0.1:80  v1.Todo.Get 
+grpcurl -d '{"id": 1}' -plaintext 127.0.0.1:80  api.protobuf.Todo.Get 
 # list
-grpcurl -plaintext 127.0.0.1:80  v1.Todo.List
+grpcurl -plaintext 127.0.0.1:80  api.protobuf.Todo.List
 # update
-grpcurl -d '{"item": {"id": 1, "title":"10点会议", "description": "服务架构调整", "remind_at": "2021-01-02T15:04:05.999999999Z"}}' -plaintext 127.0.0.1:80  v1.Todo.Update
+grpcurl -d '{"item": {"id": 1, "title":"10点会议", "description": "服务架构调整", "remind_at": "2021-01-02T15:04:05.999999999Z"}}' -plaintext 127.0.0.1:80  api.protobuf.Todo.Update
 # delete
-grpcurl -d '{"id": 1}' -plaintext 127.0.0.1:80  v1.Todo.Delete 
+grpcurl -d '{"id": 1}' -plaintext 127.0.0.1:80  api.protobuf.Todo.Delete 
 ```

@@ -3,8 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
-	v1 "github.com/jxlwqq/todo/api/todo/v1"
-	"github.com/jxlwqq/todo/internal/config"
+	"github.com/jxlwqq/todo/api/protobuf"
+	"github.com/jxlwqq/todo/internal/pkg/config"
 	flag "github.com/spf13/pflag"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/health"
@@ -34,7 +34,7 @@ func main() {
 	grpcServer := grpc.NewServer()
 	reflection.Register(grpcServer)
 
-	v1.RegisterTodoServer(grpcServer, todoServer)
+	protobuf.RegisterTodoServer(grpcServer, todoServer)
 	grpc_health_v1.RegisterHealthServer(grpcServer, healthServer)
 
 	lis, err := net.Listen("tcp", conf.GRPC.Port)
@@ -43,6 +43,7 @@ func main() {
 	}
 
 	go func() {
+		log.Println("grpc server start at: ", conf.GRPC.Port)
 		if err = grpcServer.Serve(lis); err != nil {
 			log.Fatal(err)
 		}
@@ -56,9 +57,7 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	grpcServer.GracefulStop()
-	select {
-	case <-ctx.Done():
-		close(ch)
-	}
+	<-ctx.Done()
+	close(ch)
 	fmt.Println("Graceful Shutdown end ")
 }

@@ -2,24 +2,24 @@ package todo
 
 import (
 	"context"
-	v1 "github.com/jxlwqq/todo/api/todo/v1"
+	"github.com/jxlwqq/todo/api/protobuf"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type Server struct {
-	v1.UnimplementedTodoServer
+	protobuf.UnimplementedTodoServer
 	r Repository
 }
 
-func NewServer(r Repository) v1.TodoServer {
+func NewServer(r Repository) protobuf.TodoServer {
 	return &Server{
 		r: r,
 	}
 }
 
-func (s Server) Create(ctx context.Context, req *v1.CreateRequest) (*v1.CreateResponse, error) {
+func (s Server) Create(ctx context.Context, req *protobuf.CreateRequest) (*protobuf.CreateResponse, error) {
 	title := req.Item.Title
 	description := req.Item.Description
 	remindAt := req.Item.RemindAt.AsTime()
@@ -30,7 +30,7 @@ func (s Server) Create(ctx context.Context, req *v1.CreateRequest) (*v1.CreateRe
 		RemindAt:    remindAt,
 	}
 
-	resp := v1.CreateResponse{}
+	resp := protobuf.CreateResponse{}
 
 	if err := s.r.Create(&item); err != nil {
 		return &resp, status.Errorf(codes.Internal, "create item failed: %v", err)
@@ -42,9 +42,9 @@ func (s Server) Create(ctx context.Context, req *v1.CreateRequest) (*v1.CreateRe
 
 }
 
-func (s Server) Update(ctx context.Context, req *v1.UpdateRequest) (*v1.UpdateResponse, error) {
+func (s Server) Update(ctx context.Context, req *protobuf.UpdateRequest) (*protobuf.UpdateResponse, error) {
 	id := req.Item.Id
-	resp := v1.UpdateResponse{}
+	resp := protobuf.UpdateResponse{}
 	if _, err := s.r.Get(id); err != nil {
 		return &resp, status.Error(codes.NotFound, "item not found")
 	}
@@ -68,9 +68,9 @@ func (s Server) Update(ctx context.Context, req *v1.UpdateRequest) (*v1.UpdateRe
 	return &resp, nil
 }
 
-func (s Server) Delete(ctx context.Context, req *v1.DeleteRequest) (*v1.DeleteResponse, error) {
+func (s Server) Delete(ctx context.Context, req *protobuf.DeleteRequest) (*protobuf.DeleteResponse, error) {
 	id := req.Id
-	resp := v1.DeleteResponse{}
+	resp := protobuf.DeleteResponse{}
 	if _, err := s.r.Get(id); err != nil {
 		return &resp, status.Errorf(codes.NotFound, "item not found")
 	}
@@ -83,17 +83,17 @@ func (s Server) Delete(ctx context.Context, req *v1.DeleteRequest) (*v1.DeleteRe
 	return &resp, nil
 }
 
-func (s Server) Get(ctx context.Context, req *v1.GetRequest) (*v1.GetResponse, error) {
+func (s Server) Get(ctx context.Context, req *protobuf.GetRequest) (*protobuf.GetResponse, error) {
 	id := req.Id
 
-	resp := v1.GetResponse{}
+	resp := protobuf.GetResponse{}
 
 	item, err := s.r.Get(id)
 	if err != nil {
 		return &resp, status.Errorf(codes.NotFound, "item not found")
 	}
 
-	resp.Item = &v1.Item{
+	resp.Item = &protobuf.Item{
 		Id:          item.ID,
 		Title:       item.Title,
 		Description: item.Description,
@@ -103,8 +103,8 @@ func (s Server) Get(ctx context.Context, req *v1.GetRequest) (*v1.GetResponse, e
 	return &resp, nil
 }
 
-func (s Server) List(ctx context.Context, req *v1.ListRequest) (*v1.ListResponse, error) {
-	resp := v1.ListResponse{}
+func (s Server) List(ctx context.Context, req *protobuf.ListRequest) (*protobuf.ListResponse, error) {
+	resp := protobuf.ListResponse{}
 
 	items, err := s.r.List()
 	if err != nil {
@@ -112,7 +112,7 @@ func (s Server) List(ctx context.Context, req *v1.ListRequest) (*v1.ListResponse
 	}
 
 	for _, item := range items {
-		resp.Items = append(resp.Items, &v1.Item{
+		resp.Items = append(resp.Items, &protobuf.Item{
 			Id:          item.ID,
 			Title:       item.Title,
 			Description: item.Description,
